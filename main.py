@@ -23,7 +23,7 @@ class EmailSchema(BaseModel):
 
 
 app = FastAPI()
-favicon_path = 'favicon.ico'
+favicon_path = 'static/images/favicon.ico'
 
 @app.middleware('http')
 async def custom_middleware(request: Request, call_next):

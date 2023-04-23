@@ -5,7 +5,7 @@ from fastapi_mail.errors import ConnectionErrors
 from pydantic import EmailStr
 
 from src.services.auth import auth_service
-from conf.config import settings
+from src.conf.config import settings
 
 conf = ConnectionConfig(
     MAIL_USERNAME=settings.mail_username,
