@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
 from sqlalchemy.orm import Session
 
-from src.database.connect import get_db
+from src.database.db import get_db
 from src.repository import contacts as repository_contacts
 from src.schemas.contacts import ContactResponse, ContactModel, ContactUpdate
 from src.database.models import User
