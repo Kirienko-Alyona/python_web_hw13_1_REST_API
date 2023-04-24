@@ -2,6 +2,7 @@ from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
 from sqlalchemy.orm import Session
+from fastapi_limiter.depends import RateLimiter
 
 from src.database.db import get_db
 from src.repository import contacts as repository_contacts
@@ -39,7 +40,8 @@ async def get_birthday_list(quontity_days: int = Path(ge=1), current_user: User 
     return contact
 
 
-@router.post("/", response_model=ContactResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=ContactResponse, status_code=status.HTTP_201_CREATED, description='No more than 2 requests per 10 seconds',
+            dependencies=[Depends(RateLimiter(times=2, seconds=10))])
 async def create_contact(body: ContactModel, current_user: User = Depends(auth_service.get_current_user), db: Session = Depends(get_db)):
     contact = await repository_contacts.create_contact(body, current_user, db)
     return contact

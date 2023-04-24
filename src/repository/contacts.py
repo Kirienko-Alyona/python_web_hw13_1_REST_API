@@ -61,6 +61,7 @@ async def get_contact_id(contact_id: int, user: User, db: Session) -> Contact:
 
 async def create_contact(body: ContactModel, user: User, db: Session) -> Contact:
     # create contact
+   # contact = db.query(Contact).filter_by(id=contact_id, user_id = user.id).first() - перевірити на унікальність контакт у юзера
     contact = Contact(**body.dict(), user = user)
     db.add(contact)
     db.commit()

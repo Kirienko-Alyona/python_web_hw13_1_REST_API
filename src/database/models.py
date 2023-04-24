@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Date, Integer, String, func
+from sqlalchemy import Boolean, Column, Date, Integer, String, UniqueConstraint, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
@@ -12,14 +12,15 @@ class Contact(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     surname = Column(String, nullable=False)
-    email = Column(String, unique=True, index=True)
-    phone = Column(String, unique=True, nullable=False)
+    email = Column(String, index=True)
+    phone = Column(String, nullable=False)
     born_date = Column(Date)
     user_id = Column('user_id', ForeignKey(
         'users.id', ondelete='CASCADE'), default=None)
     user = relationship('User', backref="notes")
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+    __table_args__ = (UniqueConstraint("phone", "email", "user_id", name="unique_contact_phone_email_user"), )
 
 
 class User(Base):

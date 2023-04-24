@@ -1,8 +1,8 @@
 import time
+import redis.asyncio as redis
 
 import uvicorn
 from fastapi import Depends, FastAPI, HTTPException, Request
-from pydantic import EmailStr, BaseModel
 
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -11,16 +11,24 @@ from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 
+from fastapi_limiter import FastAPILimiter
+
 from src.database.db import get_db
 from src.routes import contacts, auth
-
-
-class EmailSchema(BaseModel):
-    email: EmailStr
+from src.conf.config import settings
 
 
 app = FastAPI()
 favicon_path = 'static/images/favicon.ico'
+
+
+
+@app.on_event("startup")
+async def startup():
+    client_redis = await redis.Redis(host=settings.redis_host, port=settings.redis_port, db=0, encoding="utf-8",
+                          decode_responses=True)
+    await FastAPILimiter.init(client_redis)
+    
 
 @app.middleware('http')
 async def custom_middleware(request: Request, call_next):

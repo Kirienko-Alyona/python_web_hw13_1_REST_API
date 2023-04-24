@@ -11,3 +11,5 @@ docker-compose build - перестроить образы, определенн
 Это лишь несколько наиболее часто используемых команд, полный набор команд docker-compose можно найти в официальной документации Docker Compose.
 
 docker-compose up -d - запустити наступного разу, щоб стару базу підгрузити
+
+ alembic revision --autogenerate -m 'Init'
