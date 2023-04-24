@@ -1,4 +1,5 @@
 from typing import Optional
+import pickle
 
 from jose import JWTError, jwt
 from fastapi import HTTPException, status, Depends
@@ -7,6 +8,7 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta
 import redis
 from sqlalchemy.orm import Session
+from src.database.models import User
 from src.conf.config import settings
 
 from src.database.db import get_db
@@ -18,7 +20,12 @@ class Auth:
     SECRET_KEY = settings.secret_key
     ALGORITHM = settings.algorithm
     oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
-    r = redis.Redis(host=settings.redis_host, port=settings.redis_port, db=0)
+    client_redis = redis.Redis(host=settings.redis_host, port=settings.redis_port, db=0)
+    credentials_exception = HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
 
     def verify_password(self, plain_password, hashed_password):
@@ -48,6 +55,7 @@ class Auth:
         to_encode.update({"iat": datetime.utcnow(), "exp": expire, "scope": "refresh_token"})
         encoded_refresh_token = jwt.encode(to_encode, self.SECRET_KEY, algorithm=self.ALGORITHM)
         return encoded_refresh_token
+    
 
     async def decode_refresh_token(self, refresh_token: str):
         try:
@@ -58,29 +66,41 @@ class Auth:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid scope for token')
         except JWTError:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate credentials')
-
-    async def get_current_user(self, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-        credentials_exception = HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
+        
+    def verify_jwt_token(self, token: str = Depends(oauth2_scheme)):    
         try:
             # Decode JWT
             payload = jwt.decode(token, self.SECRET_KEY, algorithms=[self.ALGORITHM])
             if payload['scope'] == 'access_token':
                 email = payload["sub"]
                 if email is None:
-                    raise credentials_exception
+                    raise self.credentials_exception
             else:
-                raise credentials_exception
+                raise self.credentials_exception
         except JWTError as e:
-            raise credentials_exception
+            raise self.credentials_exception 
+        return email   
+        
+        
+    async def set_current_user(self, user: User):
+        #email = self.verify_jwt_token(token)
+        self.client_redis.set(f"user:{user.email}", pickle.dumps(user))
 
-        user = await repository_users.get_user_by_email(email, db)
+
+    async def get_current_user(self, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+        #user = await repository_users.get_user_by_email(email, db)
+        email = self.verify_jwt_token(token)
+        user = self.client_redis.get(f"user:{email}")
         if user is None:
-            raise credentials_exception
+            user = await repository_users.get_user_by_email(email, db)
+            if user is None:
+                raise self.credentials_exception
+            self.client_redis.set(f"user:{email}", pickle.dumps(user))
+            self.client_redis.expire(f"user:{email}", 900)
+        else:
+            user = pickle.loads(user)
+        #if user is None:
+        #    raise credentials_exception
         return user
     
     

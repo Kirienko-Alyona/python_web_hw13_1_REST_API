@@ -1,12 +1,10 @@
 import time
-from pathlib import Path
 
 import uvicorn
-from fastapi import Depends, FastAPI, HTTPException, Request, BackgroundTasks
-from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
+from fastapi import Depends, FastAPI, HTTPException, Request
 from pydantic import EmailStr, BaseModel
-from typing import List
-from fastapi.responses import JSONResponse, HTMLResponse
+
+from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -15,7 +13,6 @@ from sqlalchemy import text
 
 from src.database.db import get_db
 from src.routes import contacts, auth
-from src.services.email import conf
 
 
 class EmailSchema(BaseModel):
@@ -57,23 +54,6 @@ def healthchecker(db: Session = Depends(get_db)):
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail="Error connecting to the database")
-
-
-@app.post("/send-email")
-async def send_in_background(background_tasks: BackgroundTasks, body: EmailSchema):
-    message = MessageSchema(
-        subject="Fastapi mail module",
-        recipients=[body.email],
-        template_body={"fullname": "Billy Jones"},
-        subtype=MessageType.html
-    )
-
-    fm = FastMail(conf)
-
-    background_tasks.add_task(fm.send_message, message, template_name="example_email.html")
-
-    return {"message": "email has been sent"}
-
 
 
 app.include_router(auth.router, prefix='/api')
