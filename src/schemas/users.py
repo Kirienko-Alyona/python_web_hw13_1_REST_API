@@ -12,7 +12,7 @@ class UserModel(BaseModel):
 class UserDb(BaseModel):
     id: int
     username: str
-    email: str
+    email: EmailStr
     created_at: datetime
     avatar: str
 

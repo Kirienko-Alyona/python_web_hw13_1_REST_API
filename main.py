@@ -1,20 +1,19 @@
 import time
 import redis.asyncio as redis
-
 import uvicorn
-from fastapi import Depends, FastAPI, HTTPException, Request
 
+from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from fastapi_limiter import FastAPILimiter
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 
-from fastapi_limiter import FastAPILimiter
-
 from src.database.db import get_db
-from src.routes import contacts, auth
+from src.routes import contacts, auth, users
 from src.conf.config import settings
 
 
@@ -28,6 +27,15 @@ async def startup():
     client_redis = await redis.Redis(host=settings.redis_host, port=settings.redis_port, db=0, encoding="utf-8",
                           decode_responses=True)
     await FastAPILimiter.init(client_redis)
+    
+    
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:8000", "http://127.0.0.1:8000", "https://localhost:8000", "https://127.0.0.1:8000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)    
     
 
 @app.middleware('http')
@@ -66,6 +74,8 @@ def healthchecker(db: Session = Depends(get_db)):
 
 app.include_router(auth.router, prefix='/api')
 app.include_router(contacts.router, prefix='/api')
+app.include_router(users.router, prefix='/api')
+
 
 
 if __name__ == '__main__':
