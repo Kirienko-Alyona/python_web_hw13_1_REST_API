@@ -4,8 +4,8 @@ from pydantic import BaseModel, Field, EmailStr
 
 
 class UserModel(BaseModel):
-    username: str = Field(min_length=5, max_length=16)
-    email: str
+    username: str = Field(min_length=2, max_length=16)
+    email: EmailStr
     password: str = Field(min_length=6, max_length=10)
 
 
@@ -23,6 +23,9 @@ class UserDb(BaseModel):
 class UserResponse(BaseModel):
     user: UserDb
     detail: str = "User successfully created"
+    
+    class Config:
+        orm_mode = True
 
 
 class TokenModel(BaseModel):
