@@ -28,6 +28,13 @@ favicon_path = 'static/images/favicon.ico'
 
 @app.on_event("startup")
 async def startup():
+    """
+    The startup function is called when the application starts up.
+    It's a good place to initialize things that are used by the app, such as databases or caches.
+    
+    :return: A list of objects
+    :doc-author: Trelent
+    """
     client_redis = await redis.Redis(host=settings.redis_host, port=settings.redis_port, db=0, encoding="utf-8",
                           decode_responses=True)
     await FastAPILimiter.init(client_redis)
@@ -48,6 +55,15 @@ ALLOWED_IPS = [ip_address('192.168.1.0'), ip_address('172.16.0.0'), ip_address("
 
 @app.middleware("http")
 async def limit_access_by_ip(request: Request, call_next: Callable):
+    """
+    The limit_access_by_ip function is a middleware function that limits access to the API by IP address.
+    It checks if the client's IP address is in ALLOWED_IPS, and if not, returns a 403 Forbidden response.
+    
+    :param request: Request: Get the ip address of the client that is making a request
+    :param call_next: Callable: Pass the next function in the chain to be executed
+    :return: A jsonresponse object if the client ip address is not in allowed_ips
+    :doc-author: Trelent
+    """
     ip = ip_address(request.client.host)
     if ip not in ALLOWED_IPS:
         return JSONResponse(status_code=status.HTTP_403_FORBIDDEN, content={"detail": "Not allowed IP address"})
@@ -57,6 +73,15 @@ async def limit_access_by_ip(request: Request, call_next: Callable):
 
 @app.middleware('http')
 async def custom_middleware(request: Request, call_next):
+    """
+    The custom_middleware function is a middleware function that adds the time it took to process the request
+    to the response headers. This can be used for performance monitoring.
+    
+    :param request: Request: Get the request object
+    :param call_next: Call the next middleware in the chain
+    :return: A response object
+    :doc-author: Trelent
+    """
     start_time = time.time()
     response = await call_next(request)
     during = time.time() - start_time
@@ -72,15 +97,39 @@ app.mount("/static", StaticFiles(directory=st_abs_file_path), name="static")
 
 @app.get('/favicon.ico', include_in_schema=False)
 async def favicon():
+    """
+    The favicon function returns the favicon.ico file from the static directory.
+    
+    :return: A file response with the contents of the favicon
+    :doc-author: Trelent
+    """
     return FileResponse(favicon_path)
 
 @app.get("/", response_class=HTMLResponse, description="Main Page")
 async def root(request: Request):
+    """
+    The root function is the entry point for the web application.
+    It returns a TemplateResponse object, which renders an HTML template using Jinja2.
+    The template is located in templates/index.html and uses data from the request object to render itself.
+    
+    :param request: Request: Get the request object
+    :return: A templateresponse object
+    :doc-author: Trelent
+    """
     return templates.TemplateResponse('index.html', {"request": request, "title": "Contacts"})
 
 
 @app.get("/api/healthchecker")
 def healthchecker(db: Session = Depends(get_db)):
+    """
+    The healthchecker function is used to check the health of the database.
+    It will return a 200 status code if it can successfully connect to the database,
+    and a 500 status code otherwise.
+    
+    :param db: Session: Get the database session
+    :return: A dictionary with a message
+    :doc-author: Trelent
+    """
     try:
         # Make request
         result = db.execute(text("SELECT 1")).fetchone()
