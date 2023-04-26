@@ -1,7 +1,8 @@
-import sys
 import os
+import sys
 
-sys.path.append(os.path.abspath('..'))
+sys.path.append(os.path.abspath('C:\\Users\\Lenovo\\Documents\\Python-web\\python_web_hw14-Sphinx-Unittest-Pytest\\'))
+
 project = 'REST API Contacts App'
 copyright = '2023, Alyona Kirienko'
 author = 'Alyona Kirienko'

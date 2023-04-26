@@ -1,12 +1,9 @@
 from pathlib import Path
-
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
 from fastapi_mail.errors import ConnectionErrors
 from pydantic import EmailStr
-
-from auth import auth_service
+from src.services.auth import auth_service
 from src.conf.config import settings
-
 conf = ConnectionConfig(
     MAIL_USERNAME=settings.mail_username,
     MAIL_PASSWORD=settings.mail_password,
@@ -27,10 +24,8 @@ async def send_email(email: EmailStr, username: str, host: str):
     The send_email function sends an email to the user with a link to confirm their email address.
         The function takes in three arguments:
             -email: the user's email address, which is used as a unique identifier for them.
-            -username: the username of the user who is registering. This will be displayed in 
-                their confirmation message so they know it was sent to them and not someone else.
-            -host: this is where we are hosting our application, which will be used as part of 
-                our confirmation link.
+            -username: the username of the user who is registering. This will be displayed in their confirmation message so they know it was sent to them and not someone else.
+            -host: this is where we are hosting our application, which will be used as part of our confirmation link.
     
     :param email: EmailStr: Check if the email is valid
     :param username: str: Pass the username to the template

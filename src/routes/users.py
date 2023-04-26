@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, UploadFile, File
 from sqlalchemy.orm import Session
-from src.services.cloud_images import CloudImage
 
+from src.services.cloud_images import CloudImage
 from src.database.db import get_db
 from src.database.models import User
 from src.repository import users as repository_users
@@ -17,12 +17,12 @@ async def read_users_me(current_user: User = Depends(auth_service.get_current_us
     The read_users_me function returns the current user's information.
         ---
         get:
-          tags: [users] # This is a tag that can be used to group operations by resources or any other qualifier.
-          summary: Returns the current user's information.
-          description: Returns the current user's information based on their JWT token in their request header.
-          responses: # The possible responses this operation can return, along with descriptions and examples of each response type (if applicable).
-            &quot;200&quot;:  # HTTP status code 200 indicates success! In this case, it means we successfully returned a User
-    
+        tags: [users] # This is a tag that can be used to group operations by resources or any other qualifier.
+        summary: Returns the current user's information.
+        description: Returns the current user's information based on their JWT token in their request header.
+        responses: # The possible responses this operation can return, along with descriptions and examples of each response type (if applicable).
+        &quot;200&quot;:  # HTTP status code 200 indicates success! In this case, it means we successfully returned a User
+            
     :param current_user: User: Pass the user object to the function
     :return: The current user
     :doc-author: Trelent
@@ -39,7 +39,7 @@ async def update_avatar_user(file: UploadFile = File(), current_user: User = Dep
             file (UploadFile): The image to be uploaded.
             current_user (User): The user whose avatar is being updated.
             db (Session): A database session for interacting with the database.
-    
+            
     :param file: UploadFile: Get the file from the request body
     :param current_user: User: Get the current user from the database
     :param db: Session: Pass the database session to the function

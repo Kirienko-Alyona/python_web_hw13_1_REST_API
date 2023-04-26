@@ -48,7 +48,8 @@ async def get_contacts_search(dict_values: dict, user: User, limit: int, offset:
             dict_values (dict): A dictionary of search parameters.
             user (User): The user who is searching for contacts.
             limit (int): The maximum number of results to return from the query.
-            offset (int): The starting point from which to begin returning results, used for pagination purposes.   
+            offset (int): The starting point from which to begin returning results, used for pagination purposes.  
+             
         Returns: List[Contact]
         
     :param dict_values: dict: Pass in the search parameters
