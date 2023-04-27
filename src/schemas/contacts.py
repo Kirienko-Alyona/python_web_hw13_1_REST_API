@@ -6,7 +6,7 @@ class ContactModel(BaseModel):
     name: str = Field('James', min_length=3, max_length=16)
     surname: str = Field('Cat', min_length=3, max_length=16)
     email: EmailStr = Field('user@example.com')
-    phone: int = Field("380931234567")#, gt=100, le=999999999)
+    phone: int = Field('380931234567')#, gt=100, le=999999999)
     born_date: date = Field('2023-03-29')
     
     
