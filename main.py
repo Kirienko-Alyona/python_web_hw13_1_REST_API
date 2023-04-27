@@ -1,4 +1,4 @@
-import os
+import pathlib
 import time
 from ipaddress import ip_address
 from typing import Callable
@@ -89,10 +89,8 @@ async def custom_middleware(request: Request, call_next):
     return response
 
 templates = Jinja2Templates(directory='templates')
-#app.mount("/src/static", StaticFiles(directory="static"), name="static")
-script_dir = os.path.dirname(__file__)
-st_abs_file_path = os.path.join(script_dir, "static\\")
-app.mount("/static", StaticFiles(directory=st_abs_file_path), name="static")
+BASE_DIR = pathlib.Path(__file__).parent
+app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 
 
 @app.get('/favicon.ico', include_in_schema=False)
