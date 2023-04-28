@@ -13,7 +13,7 @@
             "cwd": "${workspaceFolder}/",
             "args": [
                 //"main:app"
-                "tests/"
+                "tests/test_unit_repository_users.py"
             ],
             "jinja": true,
             "justMyCode": true

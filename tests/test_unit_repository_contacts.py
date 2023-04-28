@@ -32,6 +32,7 @@ class TestContacts(unittest.IsolatedAsyncioTestCase):
         result = await get_contacts_search(dict_values = {}, user=self.user, limit = 10, offset = 0, db=self.session)
         self.assertEqual(result, contacts)
         
+        
     async def test_get_contacts_with_param(self):
         #if input params is
         contacts = [Contact(name = 'James')]
