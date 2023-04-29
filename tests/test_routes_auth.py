@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock
 
-from src.database.models import User
+# #from src.database.models import User
 
 
 def test_create_user(client, user, monkeypatch):
@@ -9,7 +9,8 @@ def test_create_user(client, user, monkeypatch):
     response = client.post("/api/auth/signup", json=user)
     assert response.status_code == 201, response.text
     payload = response.json()
-    assert payload["email"] == user.get('email')
+    assert payload["user"]["email"] == user.get('email')
+    assert payload["detail"] == "User successfully created. Check your email for confirmation."
 
 
 def test_repeat_create_user(client, user, monkeypatch):
@@ -19,3 +20,4 @@ def test_repeat_create_user(client, user, monkeypatch):
     assert response.status_code == 409, response.text
     payload = response.json()
     assert payload["detail"] == "Account already exists"
+ 

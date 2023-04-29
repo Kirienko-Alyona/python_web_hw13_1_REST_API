@@ -11,6 +11,13 @@ sphinx-quickstart docs
 
 cd docs
 
+
+alembic revision --autogenerate -m 'Init'
+alembic upgrade head
+
+uvicorn main:app --host localhost --port 8000 --reload
+uvicorn main:app --reload
+
  Основные команды Sphinx:
 
 sphinx-quickstart - это команда для создания нового проекта документации. Она задает ряд вопросов пользователю, таких как название проекта, автор, язык и т.д., а затем генерирует структуру каталогов и файлов, которые могут быть использованы для начала работы над документацией.
