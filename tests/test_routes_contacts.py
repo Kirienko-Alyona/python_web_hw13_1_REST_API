@@ -84,7 +84,7 @@ def test_get_birthday_list(client, access_token, redis_mock):
         assert data[0]['born_date'] == CONTACT['born_date']
 
 
-def test_update_contact(client, access_token, redis_mock, session):
+def test_update_contact(client, access_token, redis_mock):
     with redis_mock:
         response = client.put(f'/api/contacts/{CONTACT_ID}', json=UPDATE_CONTACT, headers={
                               "Authorization": f"Bearer {access_token}"})

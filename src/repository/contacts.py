@@ -134,7 +134,7 @@ async def update_contact(body: ContactUpdate, contact_id: int, user: User, db: S
             'born_date': body.born_date
             })
         db.commit()
-        if count > 0:
+        if count == 1:
             return contact
     return None    
 

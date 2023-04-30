@@ -49,8 +49,8 @@ class TestContacts(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result, contact)
 
     async def test_create_contact(self):
-        body = ContactModel(name='James', surname='Cat', email='user@example.com',
-                            phone='380931234567', born_date='2023-03-29')
+        body = ContactModel(name='Katrina', surname='Cat', email='katrina@example.com',
+                            phone='380439809690', born_date='2018-03-18')
         result = await create_contact(body=body, user=self.user, db=self.session)
         self.assertEqual(result.name, body.name)
         self.assertEqual(result.surname, body.surname)
@@ -60,13 +60,16 @@ class TestContacts(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(hasattr(result, "id"))
 
     async def test_update_contact(self):
-        contact = Contact()
-        body = ContactUpdate(name='Katrina', surname='Cat', email='user@example.com',
-                             phone='380931234567', born_date='2023-03-29')
-        self.session.query(Contact).filter_by(
-            id=self.contact_id, user_id=self.user).first.return_value = contact
-        result = await update_contact(body=body, contact_id=1, user=self.user, db=self.session)
-        self.assertEqual(result, contact)
+        old_contact = Contact(name='PieCat', surname='Catboy', email='james@example.com',
+                             phone='380439809789', born_date='2018-03-12')
+        new_contact = ContactUpdate(name='James', surname='Catboy', email='james@example.com',
+                             phone='380439809789', born_date='2018-03-12')
+        self.session.query(Contact).filter_by(id=self.contact_id, user_id=self.user).first.return_value = new_contact
+        self.session.query(Contact).filter(Contact.id == self.contact_id, Contact.user_id == self.user.id).update = MagicMock(return_value = 1)
+        # self.session.commit()
+        #.return_value = new_contact
+        result = await update_contact(new_contact, contact_id=1, user=self.user, db=self.session)
+        self.assertEqual(result, new_contact)
 
     async def test_remove_contact(self):
         contact = Contact()
