@@ -84,16 +84,3 @@ class TestContacts(unittest.IsolatedAsyncioTestCase):
         result = await get_birthday_list(quontity_days = 10, user = self.user, db = self.session) 
         self.assertEqual(result, contacts_birthday)  
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-if __name__ == '__main__':
-    unittest.main()
