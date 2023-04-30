@@ -64,10 +64,13 @@ class TestContacts(unittest.IsolatedAsyncioTestCase):
                              phone='380439809789', born_date='2018-03-12')
         new_contact = ContactUpdate(name='James', surname='Catboy', email='james@example.com',
                              phone='380439809789', born_date='2018-03-12')
+        #self.session.query(Contact).filter_by(id=self.contact_id, user_id=self.user).first.return_value = old_contact
         self.session.query(Contact).filter_by(id=self.contact_id, user_id=self.user).first.return_value = new_contact
         self.session.query(Contact).filter(Contact.id == self.contact_id, Contact.user_id == self.user.id).update = MagicMock(return_value = 1)
         result = await update_contact(new_contact, contact_id=1, user=self.user, db=self.session)
+        #self.session.query(Contact).filter_by(id=self.contact_id, user_id=self.user).first.return_value = new_contact
         self.assertEqual(result, new_contact)
+        self.assertNotEqual(old_contact, new_contact)
 
     async def test_remove_contact(self):
         contact = Contact()
