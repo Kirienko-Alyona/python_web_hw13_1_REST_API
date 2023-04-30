@@ -5,8 +5,8 @@ from pydantic import BaseModel, Field, EmailStr # poetry add pydantic[email]
 class ContactModel(BaseModel):
     name: str = Field('James', min_length=3, max_length=16)
     surname: str = Field('Cat', min_length=3, max_length=16)
-    email: EmailStr = Field('user@example.com')
-    phone: int = Field('380931234567')#, gt=100, le=999999999)
+    email: EmailStr = Field('example_user@example.com')
+    phone: str = Field('380931234567')#, gt=100, le=999999999)
     born_date: date = Field('2023-03-29')
     
     
@@ -15,7 +15,7 @@ class ContactResponse(BaseModel):
     name: str
     surname: str
     email: EmailStr
-    phone: int
+    phone: str
     born_date: date
     created_at: datetime
     updated_at: datetime
@@ -29,7 +29,7 @@ class ContactUpdate(BaseModel):
     name: str
     surname: str
     email: EmailStr
-    phone: int = 1
+    phone: str
     born_date: date   
     
     class Config:
