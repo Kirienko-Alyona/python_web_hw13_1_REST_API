@@ -24,58 +24,13 @@ app.include_router(contacts.router, prefix='/api')
 app.include_router(users.router, prefix='/api')
 #---------------------------------------------------
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db" 
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
 )
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-
-# c = engine.connect()
-
-# try:
-#     # suppose the database has been restarted.
-#     c.execute('UPDATE contact SET name=?, surname=?, email=?, phone=?, born_date=?, updated_at=CURRENT_TIMESTAMP WHERE contact.id = ?')
-#     c.close()
-# except exc.DBAPIError as e:
-#     # an exception is raised, Connection is invalidated.
-#     if e.connection_invalidated:
-#         print("Connection was invalidated!")
-
-# # after the invalidate event, a new connection
-# # starts with a new Pool
-# c = e.connect()
-# c.execute()
-
-
-# @event.listens_for(engine, "engine_connect")
-# def ping_connection(connection, branch):
-#     if branch:
-#         # this parameter is always False as of SQLAlchemy 2.0,
-#         # but is still accepted by the event hook.  In 1.x versions
-#         # of SQLAlchemy, "branched" connections should be skipped.
-#         return
-
-#     try:
-#         # run a SELECT 1.   use a core select() so that
-#         # the SELECT of a scalar value without a table is
-#         # appropriately formatted for the backend
-#         connection.scalar(select(1))
-#     except exc.DBAPIError as err:
-#         # catch SQLAlchemy's DBAPIError, which is a wrapper
-#         # for the DBAPI's exception.  It includes a .connection_invalidated
-#         # attribute which specifies if this connection is a "disconnect"
-#         # condition, which is based on inspection of the original exception
-#         # by the dialect in use.
-#         if err.connection_invalidated:
-#             # run the same SELECT again - the connection will re-validate
-#             # itself and establish a new connection.  The disconnect detection
-#             # here also causes the whole connection pool to be invalidated
-#             # so that all stale connections are discarded.
-#             connection.scalar(select(1))
-#         else:
-#             raise
 
 @pytest.fixture(scope="module")
 def session():

@@ -76,7 +76,7 @@ async def get_birthday_list(quontity_days: int = Path(ge=1), current_user: User 
     return contact
 
 
-@router.post("/", response_model=ContactResponse, status_code=status.HTTP_201_CREATED, description='No more than 2 requests per 10 seconds',
+@router.post("/", response_model=ContactResponse, status_code=status.HTTP_201_CREATED, description='No more than 2 requests per 10 second',
             dependencies=[Depends(RateLimiter(times=2, seconds=10))])
 async def create_contact(body: ContactModel, current_user: User = Depends(auth_service.get_current_user), db: Session = Depends(get_db)):
     """

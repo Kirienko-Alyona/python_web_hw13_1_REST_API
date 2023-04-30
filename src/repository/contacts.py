@@ -126,13 +126,17 @@ async def update_contact(body: ContactUpdate, contact_id: int, user: User, db: S
     # update contact
     contact = db.query(Contact).filter_by(id=contact_id, user_id = user.id).first()
     if contact:
-        contact.name = body.name,
-        contact.surname = body.surname,
-        contact.email = body.email,
-        contact.phone = body.phone,
-        contact.born_date = body.born_date
+        count = db.query(Contact).filter(Contact.id == contact_id, Contact.user_id == user.id).update({
+            'name': body.name,
+            'surname': body.surname,
+            'email': body.email,
+            'phone': body.phone,
+            'born_date': body.born_date
+            })
         db.commit()
-    return contact
+        if count > 0:
+            return contact
+    return None    
 
 
 async def remove_contact(contact_id: int, user: User, db: Session) -> Contact | None:
