@@ -1,13 +1,18 @@
 import pytest
+from unittest.mock import MagicMock, patch, AsyncMock
 from fastapi.testclient import TestClient
+import redis
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from fastapi_limiter import FastAPILimiter
 
 #from main import app
 from fastapi import FastAPI
 from src.database.models import Base
 from src.database.db import get_db
 from src.routes import auth, contacts, users
+from src.database.models import User
+from src.services.auth import auth_service
 
 
 #I was forced to write "app" here because ValueError: 'testclient' does not appear to be an IPv4 or IPv6 address
@@ -58,6 +63,26 @@ def user():
     return {"username": "James", "email": "james@example.com", "password": "12345678"}
 
 
-# @pytest.fixture(scope="module")
-# def token():
-#     return {"refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqYW1lc0BleGFtcGxlLmNvbSIsImlhdCI6MTY4Mjc5ODM1NCwiZXhwIjoxNjgzNDAzMTU0LCJzY29wZSI6InJlZnJlc2hfdG9rZW4ifQ.GbNBvepgj-8J5FN6WldJ74fRBiGLtLma1Ofa4Fb1T_U"}
+@pytest.fixture()
+def token(client: TestClient, user: dict[str, str], session, monkeypatch):
+    mock_send_email = MagicMock()
+    monkeypatch.setattr("src.routes.auth.send_email", mock_send_email)
+    client.post("/api/auth/signup", json=user)
+
+    current_user: User = session.query(User).filter(User.email == user.get("email")).first()
+    current_user.confirmed = True
+    session.commit()
+    response = client.post("/api/auth/login", data={"username": user.get("email"), "password": user.get("password")})
+    data = response.json()
+    return data #data["access_token"]
+
+
+@pytest.fixture()
+def redis_mock(monkeypatch):
+    with patch.object(auth_service, 'client_redis') as redis_mock:
+        redis_mock.get.return_value = None
+        monkeypatch.setattr('fastapi_limiter.FastAPILimiter.redis', AsyncMock())
+        monkeypatch.setattr('fastapi_limiter.FastAPILimiter.identifier', AsyncMock())
+        monkeypatch.setattr('fastapi_limiter.FastAPILimiter.http_callback', AsyncMock())
+        yield redis_mock
+

@@ -90,26 +90,23 @@ def test_request_email_confirmed(client, user, session, monkeypatch):
     assert payload["message"] == messages.YOUR_EMAIL_IS_ALREADY_CONFIRMED
     
 
-# def test_refresh_token(client, user, session, monkeypatch):  
-#     token = current_user.refresh_token
+# def test_refresh_token(client, user, session):
+#     response = client.post("/api/auth/login", data={"username": user.get("email"), "password": user.get("password")})
+#     data = response.json()
 #     current_user: User = session.query(User).filter(User.email == user.get('email')).first()
-#     current_user.refresh_token == token
- 
-#     # mock_send_email = MagicMock()
-#     # monkeypatch.setattr("src.routes.auth.send_email", mock_send_email)
-#     response = client.get(f"/api/auth/confirmed_email/{token}")
-#     #assert response.status_code == 200, response.text
+#     current_user.refresh_token != data["access_token"]
+#     response = client.get("/api/auth/refresh_token")
+#     assert response.status_code == 401, response.text
 #     payload = response.json()
-#     assert payload["message"] == messages.YOUR_EMAIL_IS_ALREADY_CONFIRMED  
+#     assert payload["detail"] == messages.INVALID_REFRESH_TOKEN 
 
     
-# def test_confirmed_email_user_confirmed(client, user, session, monkeypatch):  
- 
+# def test_confirmed_email_user_confirmed(client, user, session):  
+#     response = client.post("/api/auth/login", data={"username": user.get("email"), "password": user.get("password")})
+#     data = response.json()
+#     token = data["access_token"]
 #     current_user: User = session.query(User).filter(User.email == user.get('email')).first()
 #     current_user.confirmed == True
-#     token = current_user.refresh_token
-#     # mock_send_email = MagicMock()
-#     # monkeypatch.setattr("src.routes.auth.send_email", mock_send_email)
 #     response = client.get(f"/api/auth/confirmed_email/{token}")
 #     #assert response.status_code == 200, response.text
 #     payload = response.json()

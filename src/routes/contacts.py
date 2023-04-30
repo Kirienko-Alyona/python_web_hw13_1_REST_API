@@ -9,6 +9,7 @@ from src.repository import contacts as repository_contacts
 from src.schemas.contacts import ContactResponse, ContactModel, ContactUpdate
 from src.database.models import User
 from src.services.auth import auth_service
+from src.conf import messages
 
 router = APIRouter(prefix='/contacts', tags=['contacts'])
 
@@ -35,7 +36,7 @@ async def get_contacts_search(name: str = None, surname: str = None, email: str 
     contacts = await repository_contacts.get_contacts_search({'name': name, 'surname': surname, 'email': email, 'phone': phone}, current_user, limit, offset, db)
     if contacts is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Not Found")
+            status_code=status.HTTP_404_NOT_FOUND, detail=messages.NOT_FOUND)
     return contacts
 
 
@@ -53,7 +54,7 @@ async def get_contact_id(contact_id: int = Path(ge=1), current_user: User = Depe
     contact = await repository_contacts.get_contact_id(contact_id, current_user, db)
     if contact is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Not Found")
+            status_code=status.HTTP_404_NOT_FOUND, detail=messages.NOT_FOUND)
     return contact
 
 
@@ -71,7 +72,7 @@ async def get_birthday_list(quontity_days: int = Path(ge=1), current_user: User 
     contact = await repository_contacts.get_birthday_list(quontity_days, current_user, db)
     if contact is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Not Found")
+            status_code=status.HTTP_404_NOT_FOUND, detail=messages.NOT_FOUND)
     return contact
 
 
@@ -109,7 +110,7 @@ async def update_contact(body: ContactUpdate, contact_id: int = Path(ge=1), curr
     contact = await repository_contacts.update_contact(body, contact_id, current_user, db)
     if contact is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Not Found")
+            status_code=status.HTTP_404_NOT_FOUND, detail=messages.NOT_FOUND)
     return contact
 
 
@@ -133,5 +134,5 @@ async def remove_contact(contact_id: int = Path(ge=1), current_user: User = Depe
     contact = await repository_contacts.remove_contact(contact_id, current_user, db)
     if contact is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Not Found")
+            status_code=status.HTTP_404_NOT_FOUND, detail=messages.NOT_FOUND)
     return contact

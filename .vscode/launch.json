@@ -16,7 +16,8 @@
                 //"tests/"
                 //"tests/test_unit_repository_contacts.py"
                 //"tests/test_unit_repository_users.py"
-                "tests/test_routes_auth.py"
+                //"tests/test_routes_auth.py"
+                "tests/test_routes_contacts.py"
             ],
             "jinja": true,
             "justMyCode": true

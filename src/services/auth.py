@@ -1,5 +1,6 @@
 from typing import Optional
 import pickle
+import xgboost
 
 from jose import JWTError, jwt
 from fastapi import HTTPException, status, Depends
@@ -174,16 +175,17 @@ class Auth:
         #user = await repository_users.get_user_by_email(email, db)
         email = self.verify_jwt_token(token)
         user = self.client_redis.get(f"user:{email}")
-        if user is None:
+        model = xgboost.Booster()
+        if user is None: #in Redis
             user = await repository_users.get_user_by_email(email, db)
-            if user is None:
+            if user is None: #in DB
                 raise self.credentials_exception
+            # self.client_redis.set(f"user:{email}", model.dump_model(f'{user}.raw')) #почистити залишкові символи в redis
             self.client_redis.set(f"user:{email}", pickle.dumps(user))
             self.client_redis.expire(f"user:{email}", 900)
         else:
+            # user = model.load_model(user.raw)
             user = pickle.loads(user)
-        #if user is None:
-        #    raise credentials_exception
         return user
     
     

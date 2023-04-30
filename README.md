@@ -11,12 +11,19 @@ sphinx-quickstart docs
 
 cd docs
 
+docker-compose!!!
+docker-compose up
+docker-compose up -d - запуск з існуючою базою даних
+
 
 alembic revision --autogenerate -m 'Init'
 alembic upgrade head
-
+#--- запустити серевер
 uvicorn main:app --host localhost --port 8000 --reload
-uvicorn main:app --reload
+
+#---- запустити створення файла тестового покриття
+poetry add pytest-cov --dev
+pytest --cov-report html tests/  
 
  Основные команды Sphinx:
 
