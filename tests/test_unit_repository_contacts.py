@@ -66,8 +66,6 @@ class TestContacts(unittest.IsolatedAsyncioTestCase):
                              phone='380439809789', born_date='2018-03-12')
         self.session.query(Contact).filter_by(id=self.contact_id, user_id=self.user).first.return_value = new_contact
         self.session.query(Contact).filter(Contact.id == self.contact_id, Contact.user_id == self.user.id).update = MagicMock(return_value = 1)
-        # self.session.commit()
-        #.return_value = new_contact
         result = await update_contact(new_contact, contact_id=1, user=self.user, db=self.session)
         self.assertEqual(result, new_contact)
 
