@@ -1,31 +1,19 @@
 [tool.poetry]
-name = "hw14"
+name = "hw14-2"
 version = "0.1.0"
 description = ""
 authors = ["Kirienko-Alyona <ladybird.miami@gmail.com>"]
 readme = "README.md"
+packages = [{include = "hw14_2"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-libgravatar = "^1.0.4"
-python-jose = {extras = ["cryptography"], version = "^3.3.0"}
-passlib = {extras = ["bcrypt"], version = "^1.7.4"}
-python-multipart = "^0.0.6"
-pydantic = "^1.10.7"
-fastapi-mail = "^1.2.7"
-fastapi-limiter = "^0.1.5"
-cloudinary = "^1.32.0"
-pytest = "^7.3.1"
-xgboost = "^1.7.5"
 
-
-[tool.poetry.group.dev.dependencies]
-sphinx = "^6.2.1"
-pytest-cov = "^4.0.0"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

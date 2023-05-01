@@ -1,7 +1,10 @@
 from unittest.mock import MagicMock
 
+from jose import JWTError, jwt
+
 from src.database.models import User
 from src.conf import messages
+from src.services.auth import auth_service
 
 
 def test_create_user(client, user, monkeypatch):
@@ -31,12 +34,12 @@ def test_login_user_not_confirmed_email(client, user):
     assert payload["detail"] == messages.EMAIL_NOT_CONFIRMED
 
 
-def test_request_email_not_confirmed(client, user, session, monkeypatch):
+def test_request_email_user_not_confirmed(client, user, session, monkeypatch):
     mock_send_email = MagicMock()
     monkeypatch.setattr("src.routes.auth.send_email", mock_send_email)
     current_user: User = session.query(User).filter(
         User.email == user.get('email')).first()
-    current_user.confirmed = False
+    current_user.confirmed == False
     response = client.post("/api/auth/request_email", json=user)
     assert response.status_code == 200, response.text
     payload = response.json()
@@ -53,6 +56,26 @@ def test_confirmed_email_user_none(client, user, session):
     assert payload["detail"] == messages.NOT_FOUND
 
 
+def test_confirmed_email_user_verified(client, user, session, monkeypatch):
+    mock_send_email = MagicMock()
+    monkeypatch.setattr("src.routes.auth.send_email", mock_send_email)
+    current_user: User = session.query(User).filter(User.email == user.get("email")).first()
+    current_user.confirmed = False
+    token = auth_service.create_email_token(data={"sub": user.get('email')})
+    response = client.get(f"/api/auth/confirmed_email/{token}")
+    assert response.status_code == 200, response.text
+    payload = response.json()
+    assert payload["message"] == messages.EMAIL_CONFIRMED
+
+
+def test_confirmed_email_user_already_verified(client, user):
+    token = auth_service.create_email_token(data={"sub": user.get('email')})
+    response = client.get(f"/api/auth/confirmed_email/{token}")
+    assert response.status_code == 200, response.text
+    payload = response.json()
+    assert payload["message"] == messages.YOUR_EMAIL_IS_ALREADY_CONFIRMED
+    
+    
 def test_login_user(client, user, session):
     current_user: User = session.query(User).filter(
         User.email == user.get('email')).first()
@@ -89,7 +112,7 @@ def test_login_user_with_wrong_email(client, user, session):
     assert payload["detail"] == messages.INVALID_EMAIL
 
 
-def test_request_email_confirmed(client, user, session, monkeypatch):
+def test_request_email_user_confirmed(client, user, session, monkeypatch):
     mock_send_email = MagicMock()
     monkeypatch.setattr("src.routes.auth.send_email", mock_send_email)
     current_user: User = session.query(User).filter(
@@ -101,14 +124,6 @@ def test_request_email_confirmed(client, user, session, monkeypatch):
     assert payload["message"] == messages.YOUR_EMAIL_IS_ALREADY_CONFIRMED
 
 
-# def test_refresh_token_ok(client, session, user):
-#     current_user: User = session.query(User).filter(
-#         User.email == user.get('email')).first()
-#     headers = {'Authorization': f'Bearer {current_user.refresh_token}'}
-#     response = client.get('api/auth/refresh_token', headers=headers)
-#     assert response.status_code == 200, response.text
-#     assert response.json()['token_type'] == 'bearer'
-
 def test_refresh_token_ok(client, session, user):
     current_user: User = session.query(User).filter(
         User.email == user.get('email')).first()
@@ -117,19 +132,6 @@ def test_refresh_token_ok(client, session, user):
     assert response.status_code == 200, response.text
     payload = response.json()
     assert payload['token_type'] == 'bearer'
-    # m.TOKEN_TYPE    
+    # TOKEN_TYPE    
     # assert response.json()['access_token'] is not None 
     # assert response.json()['refresh_token'] is not None
-
-
-
-# def test_confirmed_email_user_confirmed(client, user, session):
-#     response = client.post("/api/auth/login", data={"username": user.get("email"), "password": user.get("password")})
-#     data = response.json()
-#     token = data["access_token"]
-#     current_user: User = session.query(User).filter(User.email == user.get('email')).first()
-#     current_user.confirmed == True
-#     response = client.get(f"/api/auth/confirmed_email/{token}")
-#     #assert response.status_code == 200, response.text
-#     payload = response.json()
-#     assert payload["message"] == messages.YOUR_EMAIL_IS_ALREADY_CONFIRMED
