@@ -16,10 +16,10 @@
                 //"tests/"
                 //"tests/test_unit_repository_contacts.py"
                 //"tests/test_unit_repository_users.py"
-                //"tests/test_routes_auth.py"
+                "tests/test_routes_auth.py"
                 //"tests/test_routes_contacts.py"
                 //"tests/test_routes_users.py"
-                "tests/test_services_auth.py"
+                //"tests/test_services_auth.py"
 
             ],
             "jinja": true,

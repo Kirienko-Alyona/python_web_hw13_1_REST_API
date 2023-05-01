@@ -136,17 +136,13 @@ def test_refresh_token_true(client, session, user):
     # assert response.json()['access_token'] is not None 
     # assert response.json()['refresh_token'] is not None
 
-def test_refresh_token_false(client, session, user):
-    current_user: User = session.query(User).filter(
-        User.email == user.get('email')).first()
-    token = current_user.refresh_token
-    payload = jwt.decode(token, auth_service.SECRET_KEY, algorithms=[auth_service.ALGORITHM])
-    token = jwt.encode(user.get('email'), "123", auth_service.ALGORITHM)
-    headers = {'Authorization': f'Bearer {token}'}
-    response = client.get('api/auth/refresh_token', headers=headers)
-    assert response.status_code == 401, response.text
-    payload = response.json()
-    assert payload['detail'] == messages.INVALID_REFRESH_TOKEN
+def test_refresh_token_invalid_refresh_token(client, session, user):
+    token ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqYW1lc0BleGFtcGxlLmNvbSIsImlhdCI6MTY4Mjk2MDAwNiwiZXhwIjoxNjgzNTY0ODA2LCJzY29wZSI6InJlZnJlc2hfdG9rZW4ifQ.UJE6dv7avuvlRcVRaBagaw69_sKRKhZ_vq3uscFzs3M" 
+    headers = {'Authorization': f'Bearer {token}'} 
+    response = client.get('api/auth/refresh_token', headers=headers) 
+    assert response.status_code == 401, response.text 
+    payload = response.json() 
+    assert payload['detail'] == messages.INVALID_REFRESH_TOKEN 
     
     
 def test_refresh_token_false(client, access_token):
