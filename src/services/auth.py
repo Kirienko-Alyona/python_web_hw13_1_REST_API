@@ -14,6 +14,7 @@ from src.database.models import User
 from src.conf.config import settings
 from src.database.db import get_db
 from src.repository import users as repository_users
+from src.conf import messages
 
 
 class Auth:
@@ -24,7 +25,7 @@ class Auth:
     client_redis = redis.Redis(host=settings.redis_host, port=settings.redis_port, db=0)
     credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
+            detail=messages.COULD_NOT_VALIDATE_CREDENTIALS,
             headers={"WWW-Authenticate": "Bearer"},
         )
 
@@ -117,9 +118,9 @@ class Auth:
             if payload['scope'] == 'refresh_token':
                 email = payload['sub']
                 return email
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid scope for token')
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=messages.INVALID_SCOPE_FOR_TOKEN)
         except JWTError:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate credentials')
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=messages.COULD_NOT_VALIDATE_CREDENTIALS)
         
     def verify_jwt_token(self, token: str = Depends(oauth2_scheme)):    
         """
@@ -225,11 +226,11 @@ class Auth:
             if payload['scope'] == 'email_token':
                 email = payload['sub']
                 return email
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid scope for token')
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=messages.INVALID_SCOPE_FOR_TOKEN)
         except JWTError as e:
             print(e)
             raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                                detail="Invalid token for email verification")
+                                detail=messages.INVALID_TOKEN_FOR_EMAIL_VERIFICATION)
 
 
 auth_service = Auth()

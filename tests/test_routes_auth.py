@@ -13,7 +13,7 @@ def test_create_user(client, user, monkeypatch):
     assert response.status_code == 201, response.text
     payload = response.json()
     assert payload["user"]["email"] == user.get('email')
-    assert payload["detail"] == "User successfully created. Check your email for confirmation."
+    assert payload["detail"] == messages.USER_SUCCESSFULLY_CREATED
 
 
 def test_repeat_create_user(client, user, monkeypatch):
@@ -22,7 +22,7 @@ def test_repeat_create_user(client, user, monkeypatch):
     response = client.post("/api/auth/signup", json=user)
     assert response.status_code == 409, response.text
     payload = response.json()
-    assert payload["detail"] == "Account already exists"
+    assert payload["detail"] == messages.ACCOUNT_ALREADY_EXISTS
 
 
 def test_login_user_not_confirmed_email(client, user):
