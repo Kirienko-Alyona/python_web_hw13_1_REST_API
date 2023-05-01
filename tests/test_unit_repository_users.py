@@ -30,7 +30,7 @@ class TestUsers(unittest.IsolatedAsyncioTestCase):
         user = User(email = 'example@mail.com')
         self.session.query(User).filter(email=self.email).first.return_value = user
         result = await get_user_by_email(email=self.email, db=self.session)
-        self.assertEqual(result, user)
+        self.assertEqual(result, user)     
         
         
     async def test_create_user(self):

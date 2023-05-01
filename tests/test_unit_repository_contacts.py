@@ -74,7 +74,7 @@ class TestContacts(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result, new_contact)
         self.assertNotEqual(old_contact, new_contact)
 
-    async def test_update_contact_contact_None(self):
+    async def test_update_contact_contact_none(self):
         old_contact = None
         new_contact = ContactUpdate(name='James', surname='Catboy', email='james@example.com',
                                     phone='380439809789', born_date='2018-03-12')

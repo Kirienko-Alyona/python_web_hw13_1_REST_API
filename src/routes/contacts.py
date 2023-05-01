@@ -34,7 +34,7 @@ async def get_contacts_search(name: str = None, surname: str = None, email: str 
     :doc-author: Trelent
     """
     contacts = await repository_contacts.get_contacts_search({'name': name, 'surname': surname, 'email': email, 'phone': phone}, current_user, limit, offset, db)
-    if contacts is None:
+    if len(contacts) == 0:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=messages.NOT_FOUND)
     return contacts
@@ -70,7 +70,7 @@ async def get_birthday_list(quontity_days: int = Path(ge=1), current_user: User 
     :doc-author: Trelent
     """
     contact = await repository_contacts.get_birthday_list(quontity_days, current_user, db)
-    if contact is None:
+    if len(contact) == 0:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=messages.NOT_FOUND)
     return contact

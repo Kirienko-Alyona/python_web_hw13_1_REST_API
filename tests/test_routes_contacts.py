@@ -1,4 +1,3 @@
-import time
 from src.conf import messages
 
 CONTACT = {
@@ -69,7 +68,7 @@ def test_get_contacts(client, access_token, redis_mock):
         assert data[0]['email'] == CONTACT['email']
         try:
             assert data[0]['phone'] == CONTACT['phone']
-        except:
+        finally:
             phones_match = 'AssertionError as the numbers are completely consistent'
         assert data[0]['born_date'] == CONTACT['born_date']
 
@@ -81,7 +80,7 @@ def test_get_birthday_list(client, access_token, redis_mock):
         assert response.status_code == 200, response.text
         data = response.json()
         assert type(data) == list
-        assert data[0]['born_date'] == CONTACT['born_date']
+        assert data[0]['born_date'] == CONTACT['born_date']      
 
 
 def test_update_contact(client, access_token, redis_mock):
@@ -99,7 +98,7 @@ def test_update_contact(client, access_token, redis_mock):
         assert data['email'] == UPDATE_CONTACT['email']
         try:
             assert data['phone'] == UPDATE_CONTACT['phone']
-        except:
+        finally:
             phones_match = 'AssertionError as the numbers are completely consistent'
         assert data['born_date'] == UPDATE_CONTACT['born_date']
 
@@ -113,16 +112,7 @@ def test_get_contact_by_id(client, access_token, redis_mock):
         assert data['id'] == CONTACT_ID
 
 
-def test_contact_is_none(client, access_token, redis_mock):
-    with redis_mock:
-        response = client.get(
-            f'/api/contacts/{NONE_CONTACT_ID}', headers={"Authorization": f"Bearer {access_token}"})
-        assert response.status_code == 404, response.text
-        payload = response.json()
-        assert payload["detail"] == messages.NOT_FOUND
-
-
-def test_delete_contact(client, access_token, redis_mock, session):
+def test_delete_contact(client, access_token, redis_mock):
     with redis_mock:
         response = client.delete(
             f'/api/contacts/{CONTACT_ID}', headers={"Authorization": f"Bearer {access_token}"})
@@ -130,3 +120,47 @@ def test_delete_contact(client, access_token, redis_mock, session):
         response = client.get(
             f'/api/contacts/{CONTACT_ID}', headers={"Authorization": f"Bearer {access_token}"})
         assert response.status_code == 404, response.text
+
+
+# <----- EMPTY CONTACT LIST ----->
+def test_get_contacts_empty_contacts_list(client, access_token, redis_mock):
+    with redis_mock:        
+        response = client.get(f'/api/contacts/', headers={"Authorization": f"Bearer {access_token}"})
+        assert response.status_code == 404, response.text
+        payload = response.json()
+        assert payload["detail"] == messages.NOT_FOUND
+        
+        
+def test_get_birthday_list_empty_contacts_list(client, access_token, redis_mock):
+    with redis_mock:
+        response = client.get(f'/api/contacts/birthdays/{QUONTITY_DAYS}', headers={"Authorization": f"Bearer {access_token}"})
+    assert response.status_code == 404, response.text
+    payload = response.json()
+    assert payload["detail"] == messages.NOT_FOUND    
+    
+# <----- NONE CONTACT ----->    
+def test_get_contact_id_contact_none(client, access_token, redis_mock):
+    with redis_mock:
+        response = client.get(
+            f'/api/contacts/{NONE_CONTACT_ID}', headers={"Authorization": f"Bearer {access_token}"})
+        assert response.status_code == 404, response.text
+        payload = response.json()
+        assert payload["detail"] == messages.NOT_FOUND    
+    
+    
+def test_update_contact_none_contact(client, access_token, redis_mock):
+    with redis_mock:
+        response = client.put(f'/api/contacts/{NONE_CONTACT_ID}', json=UPDATE_CONTACT, headers={
+                              "Authorization": f"Bearer {access_token}"})
+        assert response.status_code == 404, response.text
+        payload = response.json()
+        assert payload["detail"] == messages.NOT_FOUND   
+        
+        
+def test_delete_contact_contact_none(client, access_token, redis_mock):
+    with redis_mock:
+        response = client.delete(
+            f'/api/contacts/{NONE_CONTACT_ID}', headers={"Authorization": f"Bearer {access_token}"})
+        assert response.status_code == 404, response.text
+        payload = response.json()
+        assert payload["detail"] == messages.NOT_FOUND                  
