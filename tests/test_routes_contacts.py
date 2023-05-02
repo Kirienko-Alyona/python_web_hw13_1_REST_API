@@ -33,7 +33,7 @@ def test_get_birthday_list(client, access_token, redis_mock):
                               "Authorization": f"Bearer {access_token}"})
         assert response.status_code == 200, response.text
         data = response.json()
-        assert type(data) == list
+        assert isinstance(data, list)
         assert data[0]['born_date'] == CONTACT['born_date']      
 
 
