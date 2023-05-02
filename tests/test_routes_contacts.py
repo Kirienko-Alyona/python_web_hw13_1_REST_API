@@ -8,31 +8,6 @@ CONTACT = {
     'born_date': '2018-03-18'
 }
 
-CONTACT_1 = {
-    'name': 'Musya',
-    'surname': 'Cat',
-    'email': 'musya@example.com',
-    'phone': '380439809691',
-    'born_date': '2018-03-19'
-}
-
-CONTACT_2 = {
-    'name': 'Elza',
-    'surname': 'Dog',
-    'email': 'elza@example.com',
-    'phone': '380439809692',
-    'born_date': '2018-03-20'
-}
-
-CONTACT_3 = {
-    'name': 'Yuki',
-    'surname': 'Cat',
-    'email': 'yuki@example.com',
-    'phone': '380439809693',
-    'born_date': '2018-03-23'
-}
-
-
 UPDATE_CONTACT = {
     'name': 'James',
     'surname': 'Catboy',
@@ -42,7 +17,6 @@ UPDATE_CONTACT = {
 }
 
 CONTACT_ID = 1
-CONTACT_ID_2 = 2
 NONE_CONTACT_ID = 30
 QUONTITY_DAYS = 100
 
@@ -62,7 +36,7 @@ def test_get_contacts(client, access_token, redis_mock):
             '/api/contacts/', headers={"Authorization": f"Bearer {access_token}"})
         assert response.status_code == 200, response.text
         data = response.json()
-        assert type(data) == list
+        assert isinstance(data, list)
         assert data[0]['name'] == CONTACT['name']
         assert data[0]['surname'] == CONTACT['surname']
         assert data[0]['email'] == CONTACT['email']

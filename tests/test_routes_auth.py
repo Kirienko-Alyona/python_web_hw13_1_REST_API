@@ -48,7 +48,7 @@ def test_request_email_user_not_verified(client, user, session, monkeypatch):
 def test_confirmed_email_user_none(client, user, session):
     current_user: User = session.query(User).filter(
         User.email == 'email@example.com').first()
-    current_user == None
+    assert current_user == None
     token = auth_service.create_email_token(data={"sub": "email@example.com"})
     response = client.get(f"/api/auth/confirmed_email/{token}")
     assert response.status_code == 404, response.text
@@ -117,7 +117,7 @@ def test_request_email_user_confirmed(client, user, session, monkeypatch):
     monkeypatch.setattr("src.routes.auth.send_email", mock_send_email)
     current_user: User = session.query(User).filter(
         User.email == user.get('email')).first()
-    current_user.confirmed == True
+    assert current_user.confirmed == True
     response = client.post("/api/auth/request_email", json=user)
     assert response.status_code == 200, response.text
     payload = response.json()
