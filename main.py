@@ -49,7 +49,7 @@ app.add_middleware(
 )    
    
     
-ALLOWED_IPS = [ip_address("127.0.0.1"), ip_address("172.20.240.1"), ip_address('192.168.1.0'), ip_address('172.16.0.0')]
+ALLOWED_IPS = [ip_address("127.0.0.1"), ip_address("172.20.240.1"), ip_address('192.168.0.0'), ip_address('172.16.0.0')]
 
 
 @app.middleware("http")

@@ -20,6 +20,7 @@ alembic revision --autogenerate -m 'Init'
 alembic upgrade head
 #--- запустити серевер
 uvicorn main:app --host localhost --port 8000 --reload
+uvicorn main:app --reload
 
 --> this text must be added to pyproject.toml
 [tool.pytest.ini_options]
