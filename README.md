@@ -1,5 +1,20 @@
 # python_web_hw13_1_REST_API
-
+poetry add python-multipart
+poetry add python-jose["cryptography"]
+poetry add passlib["bcrypt"]
+poetry add fastapi
+poetry add uvicorn[standard] 
+poetry add alembic 
+poetry add sqlalchemy 
+poetry add psycopg2 
+poetry add sphinx -G dev 
+poetry add pytest-cov --dev
+poetry add pytest-mock --dev
+poetry add redis
+poetry add cloudinary
+poetry add libgravatar
+poetry add fastapi-limiter
+poetry add fastapi-mail
 
 Облегчить написание строк документации может помочь плагин Trelent - AI Docstrings on Demand. 
 
