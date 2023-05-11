@@ -1,6 +1,6 @@
 from typing import Optional
 import pickle
-import xgboost
+#import xgboost
 
 from jose import JWTError, jwt
 from fastapi import HTTPException, status, Depends
@@ -176,7 +176,7 @@ class Auth:
         #user = await repository_users.get_user_by_email(email, db)
         email = self.verify_jwt_token(token)
         user = self.client_redis.get(f"user:{email}")
-        model = xgboost.Booster()
+        #model = xgboost.Booster()
         if user is None: #in Redis
             user = await repository_users.get_user_by_email(email, db)
             if user is None: #in DB
